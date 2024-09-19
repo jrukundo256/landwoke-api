@@ -22,5 +22,10 @@
   "bugs": {
     "url": "https://github.com/jrukundo256/landwoke-api/issues"
   },
-  "homepage": "https://github.com/jrukundo256/landwoke-api#readme"
+  "homepage": "https://github.com/jrukundo256/landwoke-api#readme",
+  "dependencies": {
+    "express": "^4.21.0",
+    "morgan": "^1.10.0",
+    "nodemon": "^3.1.6"
+  }
 }

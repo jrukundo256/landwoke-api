@@ -1,0 +1,26 @@
+{
+  "name": "landwoke-api",
+  "version": "1.0.0",
+  "description": "landwoke api, a trusted land marketplace",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jrukundo256/landwoke-api.git"
+  },
+  "keywords": [
+    "landwoke",
+    "nodejs",
+    "express",
+    "bcrypt",
+    "jwt"
+  ],
+  "author": "Jonathan Rukundo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jrukundo256/landwoke-api/issues"
+  },
+  "homepage": "https://github.com/jrukundo256/landwoke-api#readme"
+}

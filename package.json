@@ -1,37 +1,30 @@
 {
-  "name": "landwoke-api",
+  "name": "quotes-api",
   "version": "1.0.0",
-  "description": "landwoke api, a trusted land marketplace",
+  "description": "",
   "main": "app.js",
+ 
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/jrukundo256/landwoke-api.git"
-  },
-  "keywords": [
-    "landwoke",
-    "nodejs",
-    "express",
-    "bcrypt",
-    "jwt"
-  ],
-  "author": "Jonathan Rukundo",
+  "keywords": [],
+  "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/jrukundo256/landwoke-api/issues"
-  },
-  "homepage": "https://github.com/jrukundo256/landwoke-api#readme",
   "dependencies": {
-    "@prisma/client": "^5.19.1",
+    "@prisma/client": "^5.18.0",
     "bcrypt": "^5.1.1",
     "dotenv": "^16.4.5",
-    "express": "^4.21.0",
+    "express": "^4.19.2",
+    "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
-    "nodemon": "^3.1.6"
+    "nodemon": "^3.1.4"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "prisma": "^5.18.0",
+    "supertest": "^7.0.0"
   }
 }

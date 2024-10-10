@@ -1,0 +1,208 @@
+
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  EDITOR
+  PROFESSIONAL
+  DEALER
+  SUBSCRIBER
+}
+
+model User {
+  id            String    @id @default(uuid())
+  username      String    @unique
+  email         String    @unique
+  password      String
+  role          UserRole
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+
+  dealer        Dealer?
+  professional  Professional?
+  editorResources Resource[]
+  ratings       Rating[]
+  buyerTransactions Transaction[] @relation("Buyer")
+  sellerTransactions Transaction[] @relation("Seller")
+  notifications Notification[]
+  approvals     Approval[]
+
+  Approval Approval[] @relation("approvals")
+}
+
+model Dealer {
+  id                   String    @id @default(uuid())
+  userId               String    @unique
+  user                 User      @relation(fields: [userId], references: [id])
+  name                 String
+  bio                  String?
+  officeLocation       String?
+  contactInfo          Json?
+  socialMediaProfiles  Json?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  deletedAt            DateTime?
+
+  estates              Estate[]
+}
+
+model Estate {
+  id          String    @id @default(uuid())
+  dealerId    String
+  dealer      Dealer    @relation(fields: [dealerId], references: [id])
+  name        String
+  location    Json      // Using Json to store PostGIS GEOGRAPHY(POINT, 4326)
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  plots       Plot[]
+}
+
+model Plot {
+  id           String    @id @default(uuid())
+  estateId     String
+  estate       Estate    @relation(fields: [estateId], references: [id])
+  size         String
+  price        Decimal
+  availability Boolean   @default(true)
+  geom         Json      // Using Json to store PostGIS GEOGRAPHY(POLYGON, 4326)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+
+  transactions Transaction[]
+}
+
+model Professional {
+  id          String    @id @default(uuid())
+  userId      String    @unique
+  user        User      @relation(fields: [userId], references: [id])
+  name        String
+  bio         String?
+  contactInfo Json?
+  rating      Float?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  ratings     Rating[]
+}
+
+model Rating {
+  id             String      @id @default(uuid())
+  professionalId String
+  professional   Professional @relation(fields: [professionalId], references: [id])
+  subscriberId   String
+  subscriber     User        @relation(fields: [subscriberId], references: [id])
+  rating         Int
+  review         String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  @@unique([professionalId, subscriberId])
+}
+
+enum ResourceType {
+  ARTICLE
+  DOCUMENT
+  VIDEO
+}
+
+model Resource {
+  id        String       @id @default(uuid())
+  editorId  String
+  editor    User         @relation(fields: [editorId], references: [id])
+  title     String
+  content   String
+  type      ResourceType
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  deletedAt DateTime?
+
+  tags      TagsOnResources[]
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Approval {
+  id        String         @id @default(uuid())
+  adminId   String
+  admin     User           @relation(fields: [adminId], references: [id])
+  userId    String
+  user      User           @relation("approvals", fields: [userId], references: [id])
+  status    ApprovalStatus
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+}
+
+model Document {
+  id           String   @id @default(uuid())
+  relatedId    String
+  relatedType  String
+  documentType String
+  filePath     String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
+}
+
+model Transaction {
+  id        String            @id @default(uuid())
+  plotId    String?
+  plot      Plot?             @relation(fields: [plotId], references: [id])
+  buyerId   String
+  buyer     User              @relation("Buyer", fields: [buyerId], references: [id])
+  sellerId  String
+  seller    User              @relation("Seller", fields: [sellerId], references: [id])
+  amount    Decimal
+  status    TransactionStatus
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  content   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Tag {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  resources TagsOnResources[]
+}
+
+model TagsOnResources {
+  tagId       String
+  tag         Tag      @relation(fields: [tagId], references: [id])
+  resourceId  String
+  resource    Resource @relation(fields: [resourceId], references: [id])
+  assignedAt  DateTime @default(now())
+
+  @@id([tagId, resourceId])
+}

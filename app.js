@@ -15,9 +15,15 @@ app.use(morgan('combined', {
 }));
 
 // Public routes
+
 app.use('/auth', authRoutes);
 
 // Protected routes
+
+// Landing page
+app.use('/', (req, res) => {
+  res.send("Welcome to LandWoke...!");
+});
 
 const PORT = 3500;
 
